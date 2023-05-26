@@ -1,5 +1,5 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 interface Todo {
   id: number;
@@ -9,21 +9,30 @@ interface Todo {
 }
 
 const TodoList = () => {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
+  const fetchTodos = () => {
     axios
-      .get('https://jsonplaceholder.typicode.com/todos')
-      .then((res) => setTodos(res.data))
-      .catch((error) => setError(error));
-  }, []);
+      .get<Todo[]>("https://jsonplaceholder.typicode.com/todos")
+      .then((res) => res.data);
+  };
 
-  if (error) return <p>{error}</p>;
+  // 1. react query has auto retries
+  // if call to server fail, it will retry couple of time
+  // 2. has auto refetch
+  // 3. first time get data, it store in cache
+  // next want this data, can get directly from cache, no need from server
+  const { data: todos } = useQuery({
+    // unique identifier, for caching purposes.
+    queryKey: ["todos"],
+    // function to fetch data from backend
+    queryFn: fetchTodos,
+  });
 
+  // if (error) return <p>{error}</p>;
+
+  console.log(todos);
   return (
     <ul className="list-group">
-      {todos.map((todo) => (
+      {todos?.map((todo) => (
         <li key={todo.id} className="list-group-item">
           {todo.title}
         </li>
