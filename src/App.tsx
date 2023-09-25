@@ -1,16 +1,16 @@
 import NavBar from "./routing/NavBar";
 import HomePage from "./routing/HomePage";
 import AuthProvider from "./state-management/AuthProvider";
-import TaskProvider from "./state-management/reducers/TaskProvider";
+import { TasksProvider } from "./state-management/tasks";
 import "./App.css";
 
 function App() {
   return (
     <AuthProvider>
-      <TaskProvider>
+      <TasksProvider>
         <NavBar />
         <HomePage />
-      </TaskProvider>
+      </TasksProvider>
     </AuthProvider>
   );
 }
